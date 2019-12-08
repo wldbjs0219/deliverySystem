@@ -81,10 +81,23 @@ int str_backupSystem(char* filepath) {
 //return : 0 - successfully created, -1 - failed to create the system
 int str_createSystem(char* filepath) {
 	
+	FILE *fp;
+	
+	fp= fopen("filepath","w");
+	
+	if(fp==NULL)
+	{
+		return -1;
+	}
+	
+	return 0;
+		
 }
 
 //free the memory of the deliverySystem 
 void str_freeSystem(void) {
+	
+	
 	
 }
 
@@ -157,14 +170,28 @@ int str_pushToStorage(int x, int y, int nBuilding, int nRoom, char msg[MAX_MSG_S
 //int x, int y : coordinate of the cell to extract
 //return : 0 - successfully extracted, -1 = failed to extract
 int str_extractStorage(int x, int y) {
+
+	char scanned_pw[4];    //// a password which is scaned from user
+	int check;
 	
-}
+	printf(" - password : ");
+	scanf("%4s", scanned_pw);
+	fflush(stdin);  
+	
+	check = strncmp("passwd[PASSWD_LEN+1]","scanned_pw[4]")
+		
+		
+	}
+	
+	
 
 //find my package from the storage
 //print all the cells (x,y) which has my package
 //int nBuilding, int nRoom : my building/room numbers
 //return : number of packages that the storage system has
 int str_findStorage(int nBuilding, int nRoom) {
+	
+	int cnt;
 	
 	return cnt;
 }
