@@ -121,7 +121,7 @@ int main(int argc, char *argv[]) {
 				passwd[0] = 0;
 				printf(" - password : ");
 				scanf("%4s", passwd);
-				fflush(stdin);
+				fflush(stdin); 
 				
                 //put the package in the cell
 				printf(" -----------> processing to put the package...\n\n");

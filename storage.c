@@ -83,7 +83,7 @@ int str_createSystem(char* filepath) {
 	
 	FILE *fp;
 	
-	fp= fopen("filepath","w");
+	fp= fopen("filepath","r");
 	
 	if(fp==NULL)
 	{
@@ -171,17 +171,25 @@ int str_pushToStorage(int x, int y, int nBuilding, int nRoom, char msg[MAX_MSG_S
 //return : 0 - successfully extracted, -1 = failed to extract
 int str_extractStorage(int x, int y) {
 
-	char scanned_pw[4];    //// a password which is scaned from user
-	int check;
+	char scanned_pw[4];    // a password which is scaned from user
+	int check;    		// return of strncmp
 	
 	printf(" - password : ");
 	scanf("%4s", scanned_pw);
-	fflush(stdin);  
+
+	check = strncmp(storage_t.passwd , scanned_pw);
 	
-	check = strncmp("passwd[PASSWD_LEN+1]","scanned_pw[4]")
-		
+	if( check != 0)
+	{
+		return -1;
+	}
+	
+	printf(" %s\n", storage_t.*context);
+	
+	return 0;
 		
 	}
+
 	
 	
 
