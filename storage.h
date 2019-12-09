@@ -9,4 +9,4 @@ int str_checkStorage(int x,int y);
 int str_pushToStorage(int x, int y, int nBuilding, int nRoom, char msg[MAX_MSG_SIZE+1], char passwd[PASSWD_LEN+1]);
 int str_extractStorage(int x, int y);
 int str_findStorage(int nBuilding, int nRoom);
-int str_backupSystem(char* filepath);
+int str_backupSystem(int x, int y, char* filepath);

@@ -23,11 +23,8 @@ typedef struct {
 	int room;
 	int cnt;
 	char passwd[PASSWD_LEN+1];
-	
 	char *context;
 } storage_t;
-
-struct storage_t *stptr[N*M];
 
 
 static storage_t** deliverySystem; 			//deliverySystem
@@ -59,7 +56,7 @@ static void printStorageInside(int x, int y) {
 //and allocate memory to the context pointer
 //int x, int y : cell coordinate to be initialized
 static void initStorage(int x, int y) {
-	>> 파일에 기록했던 걸 지워야함 x,y 구조체 초기화 & 문장 포인터 메모리 할당 
+	//파일에 기록했던 걸 지워야함 x,y 구조체 초기화 & 문장 포인터 메모리 할당 
 }
 
 //get password input and check if it is correct for the cell (x,y)
@@ -73,9 +70,7 @@ static int inputPasswd(int x, int y) {
 	printf(" - password : ");
 	scanf("%4s", scanned_pw);   //get password
 	
-	stptr=&storage_t;
-
-	check = strncmp(stptr[x*y]->passwd, scanned_pw);  //check if it is matching
+	check = strcmp("deliverySystem[x][y].passwd", "scanned_pw");  		//check if it is matching
 	
 	if( check != 0)
 	{
@@ -86,25 +81,37 @@ static int inputPasswd(int x, int y) {
 }
 
 
-
-
-
 // ------- API function for main.c file ---------------
 
 //backup the delivery system context to the file system
 //char* filepath : filepath and name to write
 //return : 0 - backup was successfully done, -1 - failed to backup
-int str_backupSystem(char* filepath) {
+int str_backupSystem(int x, int y, char* filepath) {
 	
+	FILE *f;
+
+	f=fopen("filepath","r");
+	
+	if(f==NULL)
+	{
+		return -1;
+	}
+		
+	fprintf(filepath ,"%d %d %d %d %s %f", x, y, deliverySystem[x][y].building, deliverySystem[x][y].room, deliverySystem[x][y].passwd, deliverySystem[x][y].context);
+
+	fclose(f);
+	
+	return 0;
+
 }
-
-
 
 //create delivery system on the double pointer deliverySystem
 //char* filepath : filepath and name to read config parameters (row, column, master password, past contexts of the delivery system
 //return : 0 - successfully created, -1 - failed to create the system
 int str_createSystem(char* filepath) {
+	  //파일열어서 l,m 쓰이게 하기 1. systemsized[2]={n,m}으로 
 	
+	initStorage(x, y);
 	FILE *fp;
 	
 	fp= fopen("filepath","r");
@@ -121,7 +128,7 @@ int str_createSystem(char* filepath) {
 //free the memory of the deliverySystem 
 void str_freeSystem(void) {
 	
-	
+	free();	
 	
 }
 
@@ -185,16 +192,20 @@ int str_checkStorage(int x, int y) {
 //return : 0 - successfully put the package, -1 - failed to put
 int str_pushToStorage(int x, int y, int nBuilding, int nRoom, char msg[MAX_MSG_SIZE+1], char passwd[PASSWD_LEN+1]) {
 	
-	//보관함(x*y)에 텍스트 넣기 >> 보관함 구조체 가르킬 포인터 만들기  텍스트에 넣어주기 >> 저장 되면 0 아니면 -1
-	FILE *fp;
+	int i;
+
+	deliverySystem[x][y].building = nBuilding ;
+	deliverySystem[x][y].room = nRoom;
+	deliverySystem[x][y].context = msg;
 	
-	stptr[x*y]->passwd=passwd;
-	stptr[x*y]->*context=msg;
+	for(i=0;i<PASSWD_LEN+1;i++)
+	{
+		deliverySystem[x][y].passwd[i]=passwd[i];	
+	}
 	
-	fp= fopen("STORPAGE_FILEATH","w");
+	deliverySystem[x][y].cnt ++;    // get msg >> increase cnt
 	
-	fprintf(fp,"%d","")
-	if(fp==NULL)
+	if()
 	{
 		return -1;
 	}
@@ -204,22 +215,23 @@ int str_pushToStorage(int x, int y, int nBuilding, int nRoom, char msg[MAX_MSG_S
 }
 
 
-
 //extract the package context with password checking
 //after password checking, then put the msg string on the screen and re-initialize the storage
 //int x, int y : coordinate of the cell to extract
 //return : 0 - successfully extracted, -1 = failed to extract
 int str_extractStorage(int x, int y) {
 	
-	inputPasswd(x, y);
+	int check;
+	
+	check = inputPasswd(x, y);
 	
 	if(check != 0)                      
 	{
 		return -1;
 	}
 	
-	printf("%s\n",stptr->context);       // put the msg in the screen
-	initStorage(x, y) 					//re-initialize thd storage
+	printf("%s\n",deliverySystem[x][y].context);       // put the msg in the screen
+	initStorage(x, y); 									//re-initialize thd storage
 
 	return 0;
 }
