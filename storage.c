@@ -3,6 +3,10 @@
 #include <string.h>
 #include "storage.h"
 
+#define N 4
+#define M 6
+
+
 /* 
   definition of storage cell structure ----
   members :
@@ -20,6 +24,8 @@ typedef struct {
 	
 	char *context;
 } storage_t;
+
+struct storage_t *stptr[N*M];
 
 
 static storage_t** deliverySystem; 			//deliverySystem
@@ -161,6 +167,27 @@ int str_checkStorage(int x, int y) {
 //return : 0 - successfully put the package, -1 - failed to put
 int str_pushToStorage(int x, int y, int nBuilding, int nRoom, char msg[MAX_MSG_SIZE+1], char passwd[PASSWD_LEN+1]) {
 	
+	//보관함(x*y)에 텍스트 넣기 >> 보관함 구조체 가르킬 포인터 만들기  텍스트에 넣어주기 >> 저장 되면 0 아니면 -1
+	FILE *fp;
+	
+	stptr[x*y]->passwd=passwd;
+	stptr[x*y]->*context=msg;
+	
+	fp= fopen("filepath","w");
+	
+	fprintf(fp,"%d","")
+	if(fp==NULL)
+	{
+		return -1;
+	}
+	
+	return 0;
+		
+	
+	 
+	 
+	
+	
 }
 
 
@@ -176,8 +203,10 @@ int str_extractStorage(int x, int y) {
 	
 	printf(" - password : ");
 	scanf("%4s", scanned_pw);
+	
+	stptr=&storage_t;
 
-	check = strncmp(storage_t.passwd , scanned_pw);
+	check = strncmp(stptr[x*y]->passwd, scanned_pw);
 	
 	if( check != 0)
 	{
