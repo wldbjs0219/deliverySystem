@@ -3,6 +3,8 @@
 #include <string.h>
 #include "storage.h"
 
+#define STORPAGE_FILEATH 		"storage.txt"
+
 #define N 4
 #define M 6
 
@@ -57,7 +59,7 @@ static void printStorageInside(int x, int y) {
 //and allocate memory to the context pointer
 //int x, int y : cell coordinate to be initialized
 static void initStorage(int x, int y) {
-	
+	>> 파일에 기록했던 걸 지워야함 x,y 구조체 초기화 & 문장 포인터 메모리 할당 
 }
 
 //get password input and check if it is correct for the cell (x,y)
@@ -65,6 +67,22 @@ static void initStorage(int x, int y) {
 //return : 0 - password is matching, -1 - password is not matching
 static int inputPasswd(int x, int y) {
 	
+	char scanned_pw[4];    // a password which is scaned from user
+	int check;    		// return of strncmp
+		
+	printf(" - password : ");
+	scanf("%4s", scanned_pw);   //get password
+	
+	stptr=&storage_t;
+
+	check = strncmp(stptr[x*y]->passwd, scanned_pw);  //check if it is matching
+	
+	if( check != 0)
+	{
+		return -1;
+	}
+		
+	return 0;
 }
 
 
@@ -173,7 +191,7 @@ int str_pushToStorage(int x, int y, int nBuilding, int nRoom, char msg[MAX_MSG_S
 	stptr[x*y]->passwd=passwd;
 	stptr[x*y]->*context=msg;
 	
-	fp= fopen("filepath","w");
+	fp= fopen("STORPAGE_FILEATH","w");
 	
 	fprintf(fp,"%d","")
 	if(fp==NULL)
@@ -181,12 +199,7 @@ int str_pushToStorage(int x, int y, int nBuilding, int nRoom, char msg[MAX_MSG_S
 		return -1;
 	}
 	
-	return 0;
-		
-	
-	 
-	 
-	
+	return 0;	
 	
 }
 
@@ -197,28 +210,19 @@ int str_pushToStorage(int x, int y, int nBuilding, int nRoom, char msg[MAX_MSG_S
 //int x, int y : coordinate of the cell to extract
 //return : 0 - successfully extracted, -1 = failed to extract
 int str_extractStorage(int x, int y) {
-
-	char scanned_pw[4];    // a password which is scaned from user
-	int check;    		// return of strncmp
 	
-	printf(" - password : ");
-	scanf("%4s", scanned_pw);
+	inputPasswd(x, y);
 	
-	stptr=&storage_t;
-
-	check = strncmp(stptr[x*y]->passwd, scanned_pw);
-	
-	if( check != 0)
+	if(check != 0)                      
 	{
 		return -1;
 	}
 	
-	printf(" %s\n", storage_t.*context);
-	
-	return 0;
-		
-	}
+	printf("%s\n",stptr->context);       // put the msg in the screen
+	initStorage(x, y) 					//re-initialize thd storage
 
+	return 0;
+}
 	
 	
 

@@ -6,7 +6,7 @@
 #define N_FLOOR					10
 #define N_ROOM					10
  
-#define STORAGE_FILEPATH 		"storage.txt"
+#define STORPAGE_FILEATH 		"storage.txt"
 
 /* run this program using the console pauser or add your own getch, system("pause") or input loop */
 
