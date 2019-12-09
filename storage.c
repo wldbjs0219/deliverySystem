@@ -109,7 +109,7 @@ int str_backupSystem(int x, int y, char* filepath) {
 //char* filepath : filepath and name to read config parameters (row, column, master password, past contexts of the delivery system
 //return : 0 - successfully created, -1 - failed to create the system
 int str_createSystem(char* filepath) {
-	  //파일열어서 l,m 쓰이게 하기 1. systemsized[2]={n,m}으로 
+	  //파일열어서 l,m 쓰이게 하기 1. systemsized[2]={n,m}으로 나머지는 0으로 
 	
 	initStorage(x, y);
 	FILE *fp;
@@ -242,9 +242,22 @@ int str_extractStorage(int x, int y) {
 //print all the cells (x,y) which has my package
 //int nBuilding, int nRoom : my building/room numbers
 //return : number of packages that the storage system has
-int str_findStorage(int nBuilding, int nRoom) {
+int str_findStorage(int nBuilding, int nRoom) { 
+
+	int i,j;      				//variable of for
+	int same_cnt=0;            // the number of times 'if'sentence has caught. 
 	
-	int cnt;
+	for(i=0;i<N;i++)           //Compare the values entered and building & room number
+	{
+		for(j=0;j<M;j++)
+		{
+			if(deliverySystem[i][j].building == nBuilding && deliverySystem[i][j].room== nRoom)
+			{
+				printf("row: %d, column: %d\n", i,j);
+				same_cnt++;	
+			}
+		}
+	}		
 	
-	return cnt;
+	return same_cnt;
 }
