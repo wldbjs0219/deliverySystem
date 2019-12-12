@@ -103,33 +103,35 @@ static int inputPasswd(int x, int y) {
 int str_backupSystem(char* filepath) {
 	
 	int i,j;   					// variables for repeat
-	FILE *f;     				// file pointer 
+	FILE *fp;     				// file pointer 
 	
-	f=fopen(filepath,"w");     // to open the file
+	fp=fopen(filepath,"w");     // to open the file
 	
-	if(f==NULL)        		  // check if the file is opened
+	if(fp==NULL)        		  // check if the file is opened
 	{
 		return -1;
 	}
-		
-	// to put the information on the txt file
-	fprintf(f, "%d %d\n %s\n", systemSize[0], systemSize[1], masterPassword);   
-	
-	for(i=0;i<systemSize[0];i++)    // To enter the storage's information you received the msg into a file:
+	else
 	{
-		for(j=0;j<systemSize[1];j++)
+		// to put the information on the txt file
+		fprintf(fp, "%d %d\n %s\n", systemSize[0], systemSize[1], masterPassword);   
+	
+		for(i=0;i<systemSize[0];i++)    // To enter the storage's information you received the msg into a file:
 		{
-			if(deliverySystem[i][j].cnt != 0)
+			for(j=0;j<systemSize[1];j++)
 			{
-				fprintf(f, "%d %d %d %d %s %s", i,j, deliverySystem[i][j].building, deliverySystem[i][j].passwd, deliverySystem[i][j].context); 
+				if(deliverySystem[i][j].cnt != 0)
+				{
+					fprintf(fp, "%d %d %d %d %s %s", i,j, deliverySystem[i][j].building, deliverySystem[i][j].passwd, deliverySystem[i][j].context); 
+				}
 			}
 		}
-	}
 
 	// to clese the file
-	fclose(f);    		
+	fclose(fp);    		
 	 
 	return 0;
+	}
 }
 
 //create delivery system on the double pointer deliverySystem
@@ -274,7 +276,6 @@ int str_checkStorage(int x, int y) {
 int str_pushToStorage(int x, int y, int nBuilding, int nRoom, char msg[MAX_MSG_SIZE+1], char passwd[PASSWD_LEN+1]) {
 	
 	int i;   		// the variable for repeat
-	char *ps;
 	int str=0;      //string length
 	
 	// to put the numebr that is scaned into each member of deliverySystem[x][y]
@@ -297,12 +298,12 @@ int str_pushToStorage(int x, int y, int nBuilding, int nRoom, char msg[MAX_MSG_S
 	// allocate memory by the length of that sentence
 	deliverySystem[x][y].context=(char*)malloc(str*sizeof(char));
 	
-	if(ps == NULL)  								// if not put the package (deliverySystem[x][y].context's memory is 0), return -1
+	if(deliverySystem[x][y].context == NULL)  					// if not put the package (deliverySystem[x][y].context's memory is 0), return -1
 	{
 		return -1;
 	}
 	
-	return 0; 										// if put the package, return 0	
+	return 0; 													// if put the package, return 0	
 	
 }
 
