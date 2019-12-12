@@ -190,7 +190,7 @@ int main(int argc, char *argv[]) {
 		}
 		
         //backup the status of the storage
-		if (str_backupSystem(STORAGE_FILEPATH) != 0)
+		if (str_backupSystem(x,y,STORAGE_FILEPATH) != 0)
 		{
 			printf("[WARNING] failed to backup the delivery system!\n");
 		}
