@@ -113,7 +113,7 @@ int main(int argc, char *argv[]) {
 				}
 				
                 //package context input (message string)
-				printf(" - message (max : 100 characters) : ");
+				printf(" - message  : ");
 				scanf("%100s", msg);
 				fflush(stdin);
 				

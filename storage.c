@@ -40,9 +40,9 @@ static char masterPassword[PASSWD_LEN+1];	//master password
 static void printStorageInside(int x, int y) {
 	printf("\n------------------------------------------------------------------------\n");
 	printf("------------------------------------------------------------------------\n");
-	if (deliverySystem[x][y].cnt > 0)   	//  if deliverySystem[x][y].cnt is over 0(=there is a context in the storage), printf the context of deliverySystem[x][y]
+	if (deliverySystem[x][y].cnt > 0)   						//  if deliverySystem[x][y].cnt is over 0(=there is a context in the storage), printf the context of deliverySystem[x][y]
 		printf("<<<<<<<<<<<<<<<<<<<<<<<< : %s >>>>>>>>>>>>>>>>>>>>>>>>>>>>\n", deliverySystem[x][y].context);
-	else                                  // if deliverySystem[x][y].cnt is 0(= there is not a context in the storage) , ptintf "empty"
+	else                                  						// if deliverySystem[x][y].cnt is 0(= there is not a context in the storage) , ptintf "empty"
 		printf("<<<<<<<<<<<<<<<<<<<<<<<< empty >>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
 		
 	printf("------------------------------------------------------------------------\n");
@@ -50,17 +50,16 @@ static void printStorageInside(int x, int y) {
 }
 
 //initialize the storage
-//and allocate memory to the context pointer
 //int x, int y : cell coordinate to be initialized
 static void initStorage(int x, int y) {
 	
-	int i;   // the variable for repeat
+	int i;   								// the variable for repeat
 	
-//set all the member variable as an initial value
+	//set all the member variables as an initial value
 	deliverySystem[x][y].cnt=0;    			 // 'cnt=0' means that deliverySystem[x][y] don't include any msg
 	deliverySystem[x][y].building=0;		
 	deliverySystem[x][y].room=0;			
-	deliverySystem[x][y].context=NULL;   	// deliverySystem[x][y]. context dosen't point anything.
+	deliverySystem[x][y].context=NULL;   	// deliverySystem[x][y].context dosen't point anything
 	
 	for(i=0;i<PASSWD_LEN+1;i++)   			// each element of password is 0
 	{
@@ -82,14 +81,14 @@ static int inputPasswd(int x, int y) {
 	scanf("%4s", scanned_pw);   
 	
 	//check if it is matching- same:0
-	check = strcmp("deliverySystem[x][y].passwd", "scanned_pw");  		
+	check = strcmp(deliverySystem[x][y].passwd, scanned_pw);  		
 	
-	if( check != 0) 					// if they are different , return -1
+	/*if( check != 0) 					// if they are different , return -1
 	{
 		return -1;
-	}
+	}*/
 		
-	return 0;
+	return check;
 }
 
 
@@ -127,15 +126,15 @@ int str_createSystem(char* filepath)
 	//make file NULL
 	FILE *fp = NULL;
 	char c;
-	int i, j;    // variabled for repeat
+	int i, j;    // variables for repeat
 	
-	// inputed the locker's column&row
+	// inputed the storage's row & column
 	int row, column;
 	
 	// open the file by reading
 	fp=fopen(filepath, "r");
 	
-	//check open the file 
+	//check open the file
 	if (fp == NULL)
 	{
 		return -1;
@@ -144,62 +143,86 @@ int str_createSystem(char* filepath)
 	// scan the row & column of storage and masterPassword
 	fscanf(fp, "%d %d %s", &systemSize[0], &systemSize[1], masterPassword);
 	
-	// dlivertSystem is allocated memory 
+	// delivertSystem is allocated memory 
 	deliverySystem = (storage_t**)malloc(systemSize[0]*sizeof(storage_t*));
 	for(i=0;i<systemSize[0];i++) {
 		deliverySystem[i]= (storage_t*)malloc(systemSize[1]*sizeof(storage_t));
 	}
 	
+	// delivertSystem.context is allocated memory
 	for(i=0;i<systemSize[0];i++) {
 		for(j=0;j<systemSize[1];j++)
 			deliverySystem[i][j].context = (char *)malloc(100 * sizeof(char));
 	}
 	
-	while(fscanf(fp, "%d %d", &inputrow, &inputcolumn)==2){ 
-		fscanf(fp, "%d %d %s %s", &deliverySystem[inputrow][inputcolumn].building, &deliverySystem[inputrow][inputcolumn].room, deliverySystem[inputrow][inputcolumn].passwd, deliverySystem[inputrow][inputcolumn].context);
-		printf("%d %d %s %d %d %d %d %s %s", systemSize[0], systemSize[1], 
-											  masterPassword, inputrow, inputcolumn, 
-											  deliverySystem[inputrow][inputcolumn].building, deliverySystem[inputrow][inputcolumn].room, 
-											  deliverySystem[inputrow][inputcolumn].passwd, 
-											  deliverySystem[inputrow][inputcolumn].context);
+	for(i=0;i<systemSize[0];i++)
+	{
+		for(j=0;j<systemSize[1];j++)
+		{
+			deliverySystem[i][j].cnt=0;
+		}
 	}
 	
+	while(fscanf(fp, "%d %d", &row, &column)==2)
+	{ 
+		fscanf(fp, "%d %d %s %s", &deliverySystem[row][column].building, &deliverySystem[row][column].room, deliverySystem[row][column].passwd, deliverySystem[row][column].context);
+		deliverySystem[row][column].cnt++;
+	}
+			/*printf("%d %d %s %d %d %d %d %s %s", systemSize[0], systemSize[1], masterPassword, row, column, 
+											     deliverySystem[row][column].building, deliverySystem[row][column].room, 
+											     deliverySystem[row][column].passwd, 
+											     deliverySystem[row][column].context); */
+	for(i=0;i<systemSize[0];i++)
+	{
+		for(j=0;j<systemSize[1];j++)
+		{
+			if (deliverySystem[row][column].cnt ==0)
+			{
+				initStorage(row, column);
+			}
+		}
+	}
+	// to close the file
 	fclose(fp);
-	return 0;
+	return 0;       // if successfully created, return 0
 };
 		
 
 //free the memory of the deliverySystem 
 void str_freeSystem(void) {
 	
-	free();	
+	int i;
 	
+	for(i=0;i<systemSize[0];i++)
+	 	free(deliverySystem[0]);
+	free(deliverySystem);	
 }
 
 
 
 //print the current state of the whole delivery system (which cells are occupied and the destination of the each occupied cells)
 void str_printStorageStatus(void) {
-	int i, j;
+	int i, j;    					// the variables for repeat
+	//print the current state of the delivery Storage System
 	printf("----------------------------- Delivery Storage System Status (%i occupied out of %i )-----------------------------\n\n", storedCnt, systemSize[0]*systemSize[1]);
 	
-	printf("\t");
-	for (j=0;j<systemSize[1];j++)   // 
+	printf("\t");   
+	for (j=0;j<systemSize[1];j++)   		 		// print the row number
 	{
-		printf(" %i\t\t",j);
+		printf(" %i\t\t",j);       
 	}
 	printf("\n-----------------------------------------------------------------------------------------------------------------\n");
 	
-	for (i=0;i<systemSize[0];i++)
+	for (i=0;i<systemSize[0];i++)  					// print the colmn number
 	{
 		printf("%i|\t",i);
-		for (j=0;j<systemSize[1];j++)
-		{
-			if (deliverySystem[i][j].cnt > 0)
+		for (j=0;j<systemSize[1];j++)  				//check whether each strage has msg and print the buliding&room number.
+		{	
+			if (deliverySystem[i][j].cnt > 0)  		// if msg is in here, print the bulding and room number of storage
 			{
-				printf("%i,%i\t|\t", deliverySystem[i][j].building, deliverySystem[i][j].room);
+				printf("%i,%i\t|\t", deliverySystem[i][j].building, deliverySystem[i][j].room); 
 			}
-			else
+			else                            
 			{
 				printf(" -  \t|\t");
 			}
@@ -212,17 +235,17 @@ void str_printStorageStatus(void) {
   
 //check if the input cell (x,y) is valid and whether it is occupied or not
 int str_checkStorage(int x, int y) {
-	if (x < 0 || x >= systemSize[0])   
+	if (x < 0 || x >= systemSize[0])         // check whether the 'x' entered exists within the row
 	{
 		return -1;
 	}
 	
-	if (y < 0 || y >= systemSize[1])
+	if (y < 0 || y >= systemSize[1])       // check whether the 'y' entered exists within the column
 	{
 		return -1;
 	}
 	
-	return deliverySystem[x][y].cnt;	
+	return deliverySystem[x][y].cnt;	 //if (x,y) is valid, return number of packages in the cell
 }
 
 
@@ -235,7 +258,9 @@ int str_checkStorage(int x, int y) {
 //return : 0 - successfully put the package, -1 - failed to put
 int str_pushToStorage(int x, int y, int nBuilding, int nRoom, char msg[MAX_MSG_SIZE+1], char passwd[PASSWD_LEN+1]) {
 	
-	int i;   // the variable for repeat
+	int i;   		// the variable for repeat
+	char *ps;
+	int str=0;      //string length
 	
 	// to put the numebr that is scaned into each member of deliverySystem[x][y]
 	deliverySystem[x][y].building = nBuilding ;   
@@ -248,14 +273,18 @@ int str_pushToStorage(int x, int y, int nBuilding, int nRoom, char msg[MAX_MSG_S
 		deliverySystem[x][y].passwd[i]=passwd[i];	
 	}
 	
-	deliverySystem[x][y].cnt ++;    // get msg >> increase cnt
+	deliverySystem[x][y].cnt ++;    				// when get msg, increase cnt
 	
-	if()  // if not put the package, return -1
+	str=strlen(msg);    							// the lenghth of msg[MAX_MSG_SIZE+1]
+	
+	ps=(char*)malloc(str*sizeof(char));
+	
+	if(ps == NULL)  								// if not put the package (deliverySystem[x][y].context's memory is 0), return -1
 	{
 		return -1;
 	}
 	
-	return 0; // if put the package, return 0	
+	return 0; 										// if put the package, return 0	
 	
 }
 
@@ -266,24 +295,29 @@ int str_pushToStorage(int x, int y, int nBuilding, int nRoom, char msg[MAX_MSG_S
 //return : 0 - successfully extracted, -1 = failed to extract
 int str_extractStorage(int x, int y) {
 	
-	int check;   // the number which chck if password is same with deliverySystem.passwd[x][y]
+	int check;    				    // the number which check if password is same with deliverySystem.passwd[x][y]
 	
-	check = inputPasswd(x, y);  	//to put the return value of inputPasswd(x,y)
+	check = inputPasswd(x, y);  	// put the return value of inputPasswd(x,y) in to check
 	
-	if(check != 0)       			// check that they are same             
+	if(check == 0)       			// check that they are same             
+	{
+		// put the msg in the screen
+		printf("------------------------------------------------------------------------\n");
+		printf("   <<<<<<<<<<<<<<<<<<<<<<< : %s >>>>>>>>>>>>>>>>>>>>>>>>>>>>\n", deliverySystem[x][y].context);
+		printf("------------------------------------------------------------------------\n");
+   
+    //re-initialize the storage
+	initStorage(x, y); 
+	free(deliverySystem[x][y].context);
+							
+	return 0;
+	}
+	
+	else
 	{
 		return -1;
 	}
-	
-	// put the msg in the screen
-	printf("------------------------------------------------------------------------\n");
-	printf("   <<<<<<<<<<<<<<<<<<<<<<< : %s >>>>>>>>>>>>>>>>>>>>>>>>>>>>\n", deliverySystem[x][y].context);
-	printf("------------------------------------------------------------------------\n");
-   
-    //re-initialize thd storage
-	initStorage(x, y); 									
 
-	return 0;
 }
 	
 	
@@ -298,11 +332,11 @@ int str_findStorage(int nBuilding, int nRoom) {
 	int same_cnt=0;            	// the number of times 'if'sentence has caught. 
 	
 	//Compare the values entered and building & room number
-	for(i=0;i<N;i++)      		// repeat for row   
+	for(i=0;i<systemSize[0];i++)      		// repeat for row   
 	{
-		for(j=0;j<M;j++)  		// repeat for column
+		for(j=0;j<systemSize[1];j++)  		// repeat for column
 		{
-			if(deliverySystem[i][j].building == nBuilding && deliverySystem[i][j].room== nRoom) // when they are same, print row and column
+			if(deliverySystem[i][j].building == nBuilding && deliverySystem[i][j].room== nRoom)  // when they are same, print row and column
 			{
 				printf("row: %d, column: %d\n", i,j);
 				same_cnt++;	 
@@ -310,5 +344,5 @@ int str_findStorage(int nBuilding, int nRoom) {
 
 		}
 	}		
-		return same_cnt;
+	return same_cnt;
 }
