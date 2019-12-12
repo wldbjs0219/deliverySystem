@@ -100,24 +100,39 @@ static int inputPasswd(int x, int y) {
 //backup the delivery system context to the file system
 //char* filepath : filepath and name to write
 //return : 0 - backup was successfully done, -1 - failed to backup
-int str_backupSystem(int x, int y, char* filepath) {
+int str_backupSystem(char* filepath) {
 	
 	int i,j;   					// variables for repeat
 	FILE *fp;     				// file pointer 
 	
-	fp=fopen(filepath,"a");     // to open the file
+	fp=fopen(filepath,"w");     // to open the file
 	
 	if(fp==NULL)        		  // check if the file is opened
 	{
 		return -1;
 	}
-	fprintf(fp, "%d %d %d %d %s %s\n", x, y, deliverySystem[x][y].building, deliverySystem[x][y].room, deliverySystem[x][y].passwd, deliverySystem[x][y].context);   
+	else
+	{
+		// to put the information on the txt file
+		fprintf(fp, "%d %d\n %s\n", systemSize[0], systemSize[1], masterPassword);   
 	
+		for(i=0;i<systemSize[0];i++)    // To enter the storage's information you received the msg into a file:
+		{
+			for(j=0;j<systemSize[1];j++)
+			{
+				if(deliverySystem[i][j].cnt != 0)
+				{
+					fprintf(fp, "%d %d %d %d %s %s\n", i,j, deliverySystem[i][j].building, deliverySystem[i][j].room, deliverySystem[i][j].passwd, deliverySystem[i][j].context); 
+				}
+			}
+		}
+
 	// to clese the file
 	fclose(fp);    		
 	 
 	return 0;
 	}
+}
 
 //create delivery system on the double pointer deliverySystem
 //char* filepath : filepath and name to read config parameters (row, column, master password, past contexts of the delivery system
